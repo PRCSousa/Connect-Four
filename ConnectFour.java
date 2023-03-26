@@ -12,6 +12,7 @@ public class ConnectFour {
             if(inicial.isWinner(col))
             {
                 System.out.println("Ganhaste ! !");
+                break;
             }
             inicial.printBoard();
             System.out.println("Score: " + inicial.evaluator());
