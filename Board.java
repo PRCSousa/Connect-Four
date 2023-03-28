@@ -84,8 +84,10 @@ public class Board {
     public boolean isWinner(int column) {
         int h = 0;
         for (int i = 0; i < 6; i++) {
-            if (board[i][column] == turn)
+            if (board[i][column] == turn) {
                 h = i;
+                break;
+            }
         }
 
         int pontos = 1;
@@ -110,7 +112,7 @@ public class Board {
                 break;
             }
         }
-        System.out.println("Pontos h = " + pontos);
+        // System.out.println("Pontos h = " + pontos);
 
         if (pontos == 4)
             return true;
@@ -137,83 +139,63 @@ public class Board {
                 break;
             }
         }
-        System.out.println("Pontos v = " + pontos);
+        // System.out.println("Pontos v = " + pontos);
 
         if (pontos == 4)
             return true;
 
         pontos = 1;
 
-        // Verificar diagonal cima direita
+        // Verificar nas diagonais
+
+        // Diagonal direita cima e esquerda baixo
         for (int i = 1; i <= 3; i++) {
-            if (h + i > 5 || column + i > 6) {
+            if (h - i < 0 || column + i > 6)
                 continue;
-            }
-            if (board[h + i][column + i] == turn) {
-                pontos++;
-            } else {
-                break;
-            }
-        }
-        System.out.println("Pontos dc = " + pontos);
-
-        if (pontos == 4)
-            return true;
-
-        pontos = 1;
-
-        // Verificar diagonal direita baixo
-        for (int i = 1; i <= 3; i++) {
-            if (h - i < 0 || column + i > 6) {
-                continue;
-            }
             if (board[h - i][column + i] == turn) {
                 pontos++;
             } else {
                 break;
             }
         }
-        System.out.println("Pontos db = " + pontos);
 
-        if (pontos == 4)
-            return true;
-
-        pontos = 1;
-
-        // Verificar diagonal esquerda baixo
         for (int i = 1; i <= 3; i++) {
-            if (h - i < 0 || column - i < 0) {
+            if (h + i > 5 || column - i < 0)
                 continue;
-            }
-            if (board[h - i][column - i] == turn) {
-                pontos++;
-            } else {
-                break;
-            }
-        }
-        System.out.println("Pontos eb = " + pontos);
-
-        if (pontos == 4)
-            return true;
-
-        pontos = 1;
-
-        // Verificar diagonal esquerda cima
-        for (int i = 1; i <= 3; i++) {
-            if (h + i > 5 || column - i < 0) {
-                continue;
-            }
             if (board[h + i][column - i] == turn) {
                 pontos++;
             } else {
                 break;
             }
         }
-        System.out.println("Pontos ec = " + pontos);
-
+        // System.out.println("diagonal direita "+pontos);
         if (pontos == 4)
             return true;
+        pontos = 1;
 
+        // Diagonal esquerda cima e direita baixo
+        for (int i = 1; i <= 3; i++) {
+            if (h - i < 0 || column - i < 0)
+                continue;
+            if (board[h - i][column - i] == turn) {
+                pontos++;
+            } else {
+                break;
+            }
+        }
+
+        for (int i = 1; i <= 3; i++) {
+            if (h + i > 5 || column + i > 6)
+                continue;
+            if (board[h + i][column + i] == turn) {
+                pontos++;
+            } else {
+                break;
+            }
+        }
+        // System.out.println("diagonal esquerda "+pontos);
+        if (pontos == 4)
+            return true;
         pontos = 1;
 
         return false;

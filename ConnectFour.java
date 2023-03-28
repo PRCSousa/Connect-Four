@@ -1,16 +1,18 @@
 import java.util.Scanner;
 
 public class ConnectFour {
-    public static void main(String Args[])
-    {
+    public static void main(String Args[]) {
         Scanner stdin = new Scanner(System.in);
         Board inicial = new Board();
         inicial.printBoard();
-        for(int i = 0; i < 42; i++){
+        for (int i = 0; i < 42; i++) {
             int col = stdin.nextInt() - 1;
             inicial = inicial.makeMove(col);
-            if(inicial.isWinner(col))
-            {
+            if (inicial.isWinner(col)) {
+                System.out.println("Ganhaste ! !");
+                break;
+            }
+            if (inicial.evaluator() >= 512 || inicial.evaluator() <= -512) {
                 System.out.println("Ganhaste ! !");
                 break;
             }
