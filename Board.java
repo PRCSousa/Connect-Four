@@ -2,6 +2,7 @@ public class Board {
     public int[][] board = new int[6][7];
 
     int turn; // 1 = player 1, 2 = player 2
+    int move; // Jogada feita pelo jogador {turn} 
 
     public Board() {
         for (int i = 0; i < 6; i++) {
@@ -13,13 +14,14 @@ public class Board {
         turn = 1;
     }
 
-    public Board(int[][] mat, int op) {
+    public Board(int[][] mat, int op, int mov) {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
                 board[i][j] = mat[i][j];
             }
         }
         turn = op;
+        move = mov;
     }
 
     public void printBoard() {
@@ -71,7 +73,7 @@ public class Board {
                 }
             }
 
-            Board temp = new Board(board, changeTurn());
+            Board temp = new Board(board, changeTurn(), column);
             return temp;
         }
     }
