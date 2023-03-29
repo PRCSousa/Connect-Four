@@ -2,7 +2,8 @@ public class Board {
     public int[][] board = new int[6][7];
 
     int turn; // 1 = player 1, 2 = player 2
-    int move; // Jogada feita pelo jogador {turn} 
+    int move; // Jogada feita pelo jogador {turn}
+    Board parent;
 
     public Board() {
         for (int i = 0; i < 6; i++) {
@@ -22,6 +23,15 @@ public class Board {
         }
         turn = op;
         move = mov;
+    }
+
+    public Board(int[][] mat, int op) {
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 7; j++) {
+                board[i][j] = mat[i][j];
+            }
+        }
+        turn = op;
     }
 
     public void printBoard() {
@@ -45,6 +55,34 @@ public class Board {
         return board;
     }
 
+    public void setParent(Board p){ parent = p;}
+
+    public boolean isTerminal() {
+        for (int i = 0; i < 6; i++) {
+            if (board[0][i] == 0)
+                return false;
+
+        }
+        return true;
+    }
+
+    public int isFullyExpanded() {
+        // meaning if it has a winner or not
+        if(evaluator() == 512) return 1;
+        if(evaluator() == -512) return 2;
+        return 0;
+    }
+
+    public boolean canInsert(int column){
+        for (int i = 5; i >= 0; i--) {
+            if (board[i][column] == 0) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
     public int changeTurn() {
         if (turn == 1)
             return 2;
@@ -55,10 +93,14 @@ public class Board {
         return turn;
     }
 
+    public boolean validMove(int col){
+        if(board[0][col] == 0) return true;
+        return false;
+    }
+
     public Board makeMove(int column) {
 
         if (column < 0 || column > 6 || board[0][column] != 0) {
-            System.out.println("Invalid move");
             return null;
         } else {
 
