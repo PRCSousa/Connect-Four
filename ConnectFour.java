@@ -54,7 +54,39 @@ public class ConnectFour {
                 }
                 break;
 
-                
+            case "MinMax":
+                turn = true;
+
+                Board state = inicial;
+
+                for (int i = 0; i < 42; i++) {
+
+                    if(turn){ // player
+
+                        int col = stdin.nextInt() - 1;
+                        Board newstate = state.makeMove(col);
+                        newstate.setParent(state);
+                        newstate.printBoard();
+
+                        if (newstate.isWinner(col)) {
+                            System.out.println("O Jogador Ganhou !");
+                            break;
+                    }
+
+                    state = newstate;
+                    turn = !turn;
+
+                }else{ // MinMax
+                    int d=state.getDepth();
+                    MinMax mm=new MinMax(state,d);
+                    state.makeMove((mm.minmax(state, 0, true)));
+                    state.printBoard();
+                    //newstate = state;
+                    turn = !turn;
+                }
+
+            }
+                break;
 
         }
         stdin.close();
