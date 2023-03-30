@@ -4,20 +4,30 @@ public class ConnectFour {
     public static void main(String Args[]) {
         Scanner stdin = new Scanner(System.in);
         Board inicial = new Board();
-        inicial.printBoard();
 
         switch (Args[0]) {
 
-            case "PvP":
+            case "PVP":
+                inicial.printBoard();
+
                 for (int i = 0; i < 42; i++) {
+                    System.out.print("\n      Player " + (i%2 + 1) + " move: ");
+
                     int col = stdin.nextInt() - 1;
-                    inicial = inicial.makeMove(col);
-                    inicial.printBoard();
-                    if (inicial.isWinner()) {
-                        System.out.println("Ganhaste ! !");
-                        break;
+
+                    while(!inicial.validMove(col)) {
+                        System.out.print(" Invalid move, try again: ");
+                        col = stdin.nextInt() - 1;
                     }
 
+                    inicial = inicial.makeMove(col);
+
+                    inicial.printBoard();
+
+                    if (inicial.isWinner()) {
+                        System.out.println("Player " + (i % 2 + 1) + " wins !");
+                        break;
+                    }
                 }
                 break;
 
@@ -29,12 +39,18 @@ public class ConnectFour {
 
                     if (i % 2 == 0) { // player
 
+                        System.out.print("\n      Player " + (i%2 + 1) + " move: ");
                         int col = stdin.nextInt() - 1;
+
+                        while(!inicial.validMove(col)) {
+                            System.out.print(" Invalid move, try again: ");
+                            col = stdin.nextInt() - 1;
+                        }
                         Board newB = current.makeMove(col);
                         newB.printBoard();
 
                         if (newB.isWinner()) {
-                            System.out.println("O Jogador Ganhou !");
+                            System.out.println("You won !");
                             break;
                         }
 
@@ -43,19 +59,18 @@ public class ConnectFour {
                     } else { // MCTS
                         MCTSNode MonteCarlo = new MCTSNode(current, null);
                         Board newB = MonteCarlo.search();
+                        System.out.println("\n        MCTS move: " + (newB.getMove() + 1));
                         newB.printBoard();
                         if (newB.isWinner()) {
-                            System.out.println("O Mt. Carlos Ganhou !");
+                            System.out.println("Monte Carlo Tree Search won !");
                             break;
                         }
                         current = newB;
                     }
-                    System.out.println("\n");
-
                 }
                 break;
 
-            case "MinMax":
+            case "MM":
 
                 Board state = inicial;
 
@@ -63,29 +78,32 @@ public class ConnectFour {
 
                     if (i % 2 == 0) { // player
 
-                        System.out.print("Player move: ");
+                        System.out.print("\n      Player " + (i%2 + 1) + " move: ");
                         int col = stdin.nextInt() - 1;
-                        System.out.println("\n");
-                        Board newstate = state.makeMove(col);
-                        newstate.printBoard();
 
-                        if (newstate.isWinner()) {
-                            System.out.println("O Jogador Ganhou !");
+                        while(!inicial.validMove(col)) {
+                            System.out.print(" Invalid move, try again: ");
+                            col = stdin.nextInt() - 1;
+                        }
+                        Board newB = state.makeMove(col);
+                        newB.printBoard();
+
+                        if (newB.isWinner()) {
+                            System.out.println("You won !");
                             break;
                         }
 
-                        state = newstate;
+                        state = newB;
 
                     } else { // MinMax
                         MinMax mm = new MinMax();
                         int move = mm.minmax(state);
                         Board newstate=state.makeMove(move);
-                        System.out.println("Minmax move: " + (move + 1));
-                        System.out.println("\n");
+                        System.out.println("\n       Minmax move: " + (move + 1));
                         newstate.printBoard();
 
                         if (newstate.isWinner()) {
-                            System.out.println("\nO MinMax Ganhou !");
+                            System.out.println("O MinMax Ganhou !");
                             break;
                         }
 
@@ -96,7 +114,7 @@ public class ConnectFour {
                 }
                 break;
 
-            case "MinMaxAB":
+            case "AB":
 
                 Board ab = inicial;
 
@@ -104,29 +122,33 @@ public class ConnectFour {
 
                     if (i % 2 == 0) { // player
 
-                        System.out.print("Player move: ");
+                        System.out.print("\n      Player " + (i%2 + 1) + " move: ");
                         int col = stdin.nextInt() - 1;
-                        System.out.println("\n");
-                        Board newstate = ab.makeMove(col);
-                        newstate.printBoard();
 
-                        if (newstate.isWinner()) {
-                            System.out.println("O Jogador Ganhou !");
+                        while(!inicial.validMove(col)) {
+                            System.out.print(" Invalid move, try again: ");
+                            col = stdin.nextInt() - 1;
+                        }
+                        Board newB = ab.makeMove(col);
+                        newB.printBoard();
+
+                        if (newB.isWinner()) {
+                            System.out.println("You won !");
                             break;
                         }
 
-                        ab = newstate;
+                        ab = newB;
 
                     } else { // MinMax
                         MinMaxAB mm = new MinMaxAB();
                         int move = mm.minmax(ab);
                         Board newstate=ab.makeMove(move);
-                        System.out.println("Alpha-Beta move: " + (move + 1));
-                        System.out.println("\n");
+                        System.out.println("\n    Alpha-Beta move: " + (move + 1));
+
                         newstate.printBoard();
 
                         if (newstate.isWinner()) {
-                            System.out.println("\nO Alpha-Beta Ganhou !");
+                            System.out.println("Alpha-Beta won !");
                             break;
                         }
 
@@ -136,6 +158,11 @@ public class ConnectFour {
 
                 }
                 break;
+
+                default:
+                    System.out.println("Invalid Argument");
+                    System.out.println("Usage: java ConnectFour [PVP | MCTS | MM | AB]");
+                    break;
 
         }
         stdin.close();
