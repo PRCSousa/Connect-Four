@@ -24,7 +24,7 @@ public class MCTSNode implements Comparable<MCTSNode>{
     }
 
     public double ucb(){
-        return v/(double)n + Math.sqrt(2)* Math.sqrt(Math.log(parent.n)/(double)n);
+        return (v/(double)n + Math.sqrt(2)* Math.sqrt(Math.log(parent.n)/(double)n));
     }
 
     public MCTSNode select(){
@@ -53,7 +53,7 @@ public class MCTSNode implements Comparable<MCTSNode>{
 
 
         }
-        return b.isFullyExpanded();
+        return b.isFullyExpanded(); //return a quem ganhou (1 se player, 2 se MC, 3 se empate)
     }
 
     public void backpropagation(int winner){
@@ -66,9 +66,10 @@ public class MCTSNode implements Comparable<MCTSNode>{
     public void expand(){
         for(int i = 0; i < 7; i++)
         {
-            Board b = new Board(board.getBoard(), board.getTurn());
+            
             if(board.canInsert(i))
             {
+                Board b = new Board(board.getBoard(), board.getTurn());
                 b = b.makeMove(i);
                 MCTSNode newNode = new MCTSNode(b, this);
                 children.add(newNode);
@@ -76,8 +77,18 @@ public class MCTSNode implements Comparable<MCTSNode>{
         }
     }
 
+    public void reset(){
+        PriorityQueue<MCTSNode> filhos = new PriorityQueue<>();
+        while(!children.isEmpty()){
+            filhos.add(children.poll());
+        }
+        children = filhos;
+        if(parent==null){return;}
+        parent.reset();
+    }
+
     public Board search(){
-        for(int i = 0; i < 10000; i++){
+        for(int i = 0; i < 15000; i++){
             MCTSNode b = select();
             if(b.board.isFullyExpanded()!=0){
                 b.backpropagation(b.board.isFullyExpanded());}
@@ -93,11 +104,12 @@ public class MCTSNode implements Comparable<MCTSNode>{
                 }
                 b.children = q;
             }
+            b.reset();
         }
 
         Board b = children.peek().board;
 
-        double min = 2;
+        double min = 1;
         while(!children.isEmpty()){
             MCTSNode filho = children.poll();
             if(((double)filho.v/filho.n) < min){   
