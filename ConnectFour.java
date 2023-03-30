@@ -5,7 +5,7 @@ public class ConnectFour {
         Scanner stdin = new Scanner(System.in);
         Board inicial = new Board();
 
-        switch ("MinMax") {
+        switch (Args[0]) {
 
             case "PvP":
                 for (int i = 0; i < 42; i++) {
