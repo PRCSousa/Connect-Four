@@ -71,6 +71,7 @@ public class MCTSNode implements Comparable<MCTSNode>{
             {
                 Board b = new Board(board.getBoard(), board.getTurn());
                 b = b.makeMove(i);
+                b.setMove(i);
                 MCTSNode newNode = new MCTSNode(b, this);
                 children.add(newNode);
             }
@@ -117,7 +118,6 @@ public class MCTSNode implements Comparable<MCTSNode>{
                 b = filho.board;
             }
         }
-
         return b;
 
     }
