@@ -15,16 +15,6 @@ public class Board {
         turn = 1;
     }
 
-    public Board(int[][] mat, int op, int mov) {
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 7; j++) {
-                board[i][j] = mat[i][j];
-            }
-        }
-        turn = op;
-        move = mov;
-    }
-
     public Board(int[][] mat, int op) {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
@@ -34,10 +24,12 @@ public class Board {
         turn = op;
     }
 
+    // --------------------------------------------------------------------------------------
+
     public void printBoard() {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
-                // print 1's as X's and 0's as O's, if its empty print a '-'
+                // print 1's as X's and 2's as O's, if its empty print a '-'
                 if (board[i][j] == 1) {
                     System.out.print("X");
                 } else if (board[i][j] == 2) {
@@ -70,6 +62,7 @@ public class Board {
         // meaning if it has a winner or not
         if(evaluator() == 512) return 1;
         if(evaluator() == -512) return 2;
+        if(isOver()) return -1;
         return 0;
     }
 
@@ -94,13 +87,13 @@ public class Board {
     }
 
     public boolean validMove(int col){
-        if(board[0][col] == 0) return true;
-        return false;
+        if(col < 0 || col > 6 || board[0][col] != 0) return false;
+        return true;
     }
 
     public Board makeMove(int column) {
 
-        if (column < 0 || column > 6 || board[0][column] != 0) {
+        if (!validMove(column)) {
             return null;
         } else {
 
@@ -120,128 +113,22 @@ public class Board {
                 }
             }
 
-            Board temp = new Board(board, changeTurn(), column);
+            Board temp = new Board(board, changeTurn());
             return temp;
         }
     }
 
-    public boolean isWinner(int column) {
-        int h = 0;
-        for (int i = 0; i < 6; i++) {
-            if (board[i][column] == turn) {
-                h = i;
-                break;
-            }
+    public boolean isOver()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if(board[0][i] == 0) return false;
         }
+        return true;
+    }
 
-        int pontos = 1;
-
-        // Verificar na horizontal
-        for (int i = column - 1; i >= (column - 3); i--) {
-            if (i < 0)
-                break;
-            if (board[h][i] == turn) {
-                pontos++;
-            } else {
-                break;
-            }
-        }
-
-        for (int i = column + 1; i <= (column + 3); i++) {
-            if (i > 6)
-                continue;
-            if (board[h][i] == turn) {
-                pontos++;
-            } else {
-                break;
-            }
-        }
-        // System.out.println("Pontos h = " + pontos);
-
-        if (pontos == 4)
-            return true;
-
-        pontos = 1;
-
-        // Verificar na vertical
-        for (int i = h - 1; i >= (h - 3); i--) {
-            if (i < 0)
-                continue;
-            if (board[i][column] == turn) {
-                pontos++;
-            } else {
-                break;
-            }
-        }
-
-        for (int i = h + 1; i <= (h + 3); i++) {
-            if (i > 5)
-                continue;
-            if (board[i][column] == turn) {
-                pontos++;
-            } else {
-                break;
-            }
-        }
-        // System.out.println("Pontos v = " + pontos);
-
-        if (pontos == 4)
-            return true;
-
-        pontos = 1;
-
-        // Verificar nas diagonais
-
-        // Diagonal direita cima e esquerda baixo
-        for (int i = 1; i <= 3; i++) {
-            if (h - i < 0 || column + i > 6)
-                continue;
-            if (board[h - i][column + i] == turn) {
-                pontos++;
-            } else {
-                break;
-            }
-        }
-
-        for (int i = 1; i <= 3; i++) {
-            if (h + i > 5 || column - i < 0)
-                continue;
-            if (board[h + i][column - i] == turn) {
-                pontos++;
-            } else {
-                break;
-            }
-        }
-        // System.out.println("diagonal direita "+pontos);
-        if (pontos == 4)
-            return true;
-        pontos = 1;
-
-        // Diagonal esquerda cima e direita baixo
-        for (int i = 1; i <= 3; i++) {
-            if (h - i < 0 || column - i < 0)
-                continue;
-            if (board[h - i][column - i] == turn) {
-                pontos++;
-            } else {
-                break;
-            }
-        }
-
-        for (int i = 1; i <= 3; i++) {
-            if (h + i > 5 || column + i > 6)
-                continue;
-            if (board[h + i][column + i] == turn) {
-                pontos++;
-            } else {
-                break;
-            }
-        }
-        // System.out.println("diagonal esquerda "+pontos);
-        if (pontos == 4)
-            return true;
-        pontos = 1;
-
+    public boolean isWinner() {
+        if(evaluator() == 512 || evaluator() == -512) return true;
         return false;
     }
 
@@ -281,7 +168,7 @@ public class Board {
 
                 // Verify the score and add to the sum
                 if (x == 4 && o == 0)
-                    util += 512;
+                    return 512;
                 if (x == 3 && o == 0)
                     util += 50;
                 if (x == 2 && o == 0)
@@ -295,7 +182,7 @@ public class Board {
                 if (x == 0 && o == 3)
                     util -= 50;
                 if (x == 0 && o == 4)
-                    util -= 512;
+                    return -512;
 
             }
         }
@@ -317,7 +204,7 @@ public class Board {
 
                 // Verify the score and add to the sum
                 if (x == 4 && o == 0)
-                    util += 512;
+                    return 512;
                 if (x == 3 && o == 0)
                     util += 50;
                 if (x == 2 && o == 0)
@@ -331,7 +218,7 @@ public class Board {
                 if (x == 0 && o == 3)
                     util -= 50;
                 if (x == 0 && o == 4)
-                    util -= 512;
+                    return -512;
 
             }
         }
@@ -353,7 +240,7 @@ public class Board {
 
                 // Verify the score and add to the sum
                 if (x == 4 && o == 0)
-                    util += 512;
+                    return 512;
                 if (x == 3 && o == 0)
                     util += 50;
                 if (x == 2 && o == 0)
@@ -367,7 +254,7 @@ public class Board {
                 if (x == 0 && o == 3)
                     util -= 50;
                 if (x == 0 && o == 4)
-                    util -= 512;
+                    return -512;
 
             }
         }
@@ -389,7 +276,7 @@ public class Board {
 
                 // Verify the score and add to the sum
                 if (x == 4 && o == 0)
-                    util += 512;
+                    return 512;
                 if (x == 3 && o == 0)
                     util += 50;
                 if (x == 2 && o == 0)
@@ -403,7 +290,7 @@ public class Board {
                 if (x == 0 && o == 3)
                     util -= 50;
                 if (x == 0 && o == 4)
-                    util -= 512;
+                    return -512;
 
             }
         }
