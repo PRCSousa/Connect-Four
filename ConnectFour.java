@@ -78,7 +78,6 @@ public class ConnectFour {
 
                     } else { // MinMax
                         MinMax mm = new MinMax();
-                        //Board newstate = state.makeMove((mm.minmax(state, 0, true)));
                         int move = mm.minmax(state);
                         Board newstate=state.makeMove(move);
                         System.out.println("Minmax move: " + (move + 1));
@@ -120,15 +119,14 @@ public class ConnectFour {
 
                     } else { // MinMax
                         MinMaxAB mm = new MinMaxAB();
-                        //Board newstate = state.makeMove((mm.minmax(state, 0, true)));
                         int move = mm.minmax(ab);
                         Board newstate=ab.makeMove(move);
-                        System.out.println("Minmax move: " + (move + 1));
+                        System.out.println("Alpha-Beta move: " + (move + 1));
                         System.out.println("\n");
                         newstate.printBoard();
 
                         if (newstate.isWinner()) {
-                            System.out.println("\nO MinMax Ganhou !");
+                            System.out.println("\nO Alpha-Beta Ganhou !");
                             break;
                         }
 
