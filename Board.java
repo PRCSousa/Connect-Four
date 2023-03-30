@@ -29,6 +29,7 @@ public class Board {
     // --------------------------------------------------------------------------------------
 
     public void printBoard() {
+        System.out.println("-----------------------------");
         System.out.println("| 1 | 2 | 3 | 4 | 5 | 6 | 7 |");
         System.out.println("-----------------------------");
         for (int i = 0; i < 6; i++) {
@@ -57,6 +58,14 @@ public class Board {
 
     public int getDepth() {
         return depth;
+    }
+
+    public void setMove(int p) {
+        move = p;
+    }
+
+    public int getMove() {
+        return move;
     }
 
     public void setParent(Board p){ parent = p;}
