@@ -5,7 +5,7 @@ public class ConnectFour {
         Scanner stdin = new Scanner(System.in);
         Board inicial = new Board();
 
-        switch ("MCTS") {
+        switch ("MinMax") {
 
             case "PvP":
                 for (int i = 0; i < 42; i++) {
@@ -16,7 +16,7 @@ public class ConnectFour {
                         System.out.println("Ganhaste ! !");
                         break;
                     }
-                
+
                 }
                 break;
 
@@ -26,11 +26,10 @@ public class ConnectFour {
 
                 for (int i = 0; i < 42; i++) {
 
-                    if(i%2 == 0){ // player
+                    if (i % 2 == 0) { // player
 
                         int col = stdin.nextInt() - 1;
                         Board newB = current.makeMove(col);
-                        newB.setParent(current);
                         newB.printBoard();
 
                         if (newB.isWinner()) {
@@ -40,7 +39,7 @@ public class ConnectFour {
 
                         current = newB;
 
-                    }else{ // MCTS
+                    } else { // MCTS
                         MCTSNode MonteCarlo = new MCTSNode(current, null);
                         Board newB = MonteCarlo.search();
                         newB.printBoard();
@@ -56,37 +55,39 @@ public class ConnectFour {
                 break;
 
             case "MinMax":
-                turn = true;
 
                 Board state = inicial;
 
                 for (int i = 0; i < 42; i++) {
 
-                    if(turn){ // player
+                    if (i % 2 == 0) { // player
 
                         int col = stdin.nextInt() - 1;
                         Board newstate = state.makeMove(col);
-                        newstate.setParent(state);
                         newstate.printBoard();
 
-                        if (newstate.isWinner(col)) {
+                        if (newstate.isWinner()) {
                             System.out.println("O Jogador Ganhou !");
                             break;
+                        }
+
+                        state = newstate;
+
+                    } else { // MinMax
+                        int d = state.getDepth();
+                        MinMax mm = new MinMax(state, d);
+                        Board newstate = state.makeMove((mm.minmax(state, 0, true)));
+                        newstate.printBoard();
+
+                        if (newstate.isWinner()) {
+                            System.out.println("\nO MinMax Ganhou !");
+                            break;
+                        }
+
+                        state = newstate;
                     }
 
-                    state = newstate;
-                    turn = !turn;
-
-                }else{ // MinMax
-                    int d=state.getDepth();
-                    MinMax mm=new MinMax(state,d);
-                    state.makeMove((mm.minmax(state, 0, true)));
-                    state.printBoard();
-                    //newstate = state;
-                    turn = !turn;
                 }
-
-            }
                 break;
 
         }
