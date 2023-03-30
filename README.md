@@ -12,7 +12,9 @@ This will generate all the necessary files for the program to execute, which can
 In the argument [algorithm], you may choose what kind of game you want to play:
 
 "PVP" - Player VS Player
+
 2MM"  - MinMax
+
 "AB"  - MinMax with Alpha-Beta Pruning
 
 # How to play:
