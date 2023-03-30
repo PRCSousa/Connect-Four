@@ -5,6 +5,8 @@ public class Board {
     int move; // Jogada feita pelo jogador {turn}
     Board parent;
 
+    int depth;
+
     public Board() {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
@@ -47,7 +49,17 @@ public class Board {
         return board;
     }
 
+    public void setDepth(int p) {
+        depth = p;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
     public void setParent(Board p){ parent = p;}
+
+    public Board getParent(){ return parent;}
 
     public boolean isTerminal() {
         for (int i = 0; i < 6; i++) {
