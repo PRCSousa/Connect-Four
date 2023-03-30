@@ -29,20 +29,22 @@ public class Board {
     // --------------------------------------------------------------------------------------
 
     public void printBoard() {
+        System.out.println("| 1 | 2 | 3 | 4 | 5 | 6 | 7 |");
+        System.out.println("-----------------------------");
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
                 // print 1's as X's and 2's as O's, if its empty print a '-'
                 if (board[i][j] == 1) {
-                    System.out.print("X");
+                    System.out.print("| X ");
                 } else if (board[i][j] == 2) {
-                    System.out.print("O");
+                    System.out.print("| O ");
                 } else {
-                    System.out.print("-");
+                    System.out.print("|   ");
                 }
             }
-            System.out.println();
+            System.out.println("|");
+            System.out.println("-----------------------------");
         }
-        System.out.println("1234567");
     }
 
     public int[][] getBoard() {
@@ -74,7 +76,7 @@ public class Board {
         // meaning if it has a winner or not
         if(evaluator() == 512) return 1;
         if(evaluator() == -512) return 2;
-        if(isOver()) return -1;
+        if(isOver()) return 3;
         return 0;
     }
 
