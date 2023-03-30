@@ -1,4 +1,5 @@
 import java.lang.Math;
+import java.util.Arrays;
 
 public class MinMax {
     Board board;
@@ -18,47 +19,47 @@ public class MinMax {
             if (board.canInsert(i)) {
                 Board b = new Board(board.getBoard(), board.getTurn());
                 b = b.makeMove(i);
-                int heurVal = minmax(b, 0, true);
+                int heurVal = minmax(b, 0, false);
                 if (heurVal < minVal) {
                     minVal = heurVal;
                     move = i;
                 }
             }
         }
+        System.out.println("Minmax: " + move);
+        System.out.println("Heuristic value: " + minVal);
         return move;
     }
 
     public int minmax(Board state, int depth, boolean isMax) {
-        int value = 0;
 
-        if (depth == 0 || state.isTerminal())
-            return state.evaluator();
+        if (depth == 6 || state.isTerminal())
+            return state.evaluator(); // negativo = bom para o PC
 
         if (isMax) {
-            value = -512;
+            int value = -513;
             for (int i = 0; i < 7; i++) {
                 if (state.canInsert(i)) {
                     Board child = new Board(state.getBoard(), state.getTurn());
                     child = child.makeMove(i);
-                    value = Math.max(value, minmax(child, depth + 1, false));
-                    return value;
+                    value = Math.max(value,minmax(child, depth + 1, false));
                 }
             }
+            return value;
         }
 
         else {
-            value = 512;
+            int value = 513;
             for (int i = 0; i < 7; i++) {
                 if (state.canInsert(i)) {
                     Board child = new Board(state.getBoard(), state.getTurn());
                     child = child.makeMove(i);
                     value = Math.min(value, minmax(child, depth + 1, true));
-                    return value;
                 }
             }
+            return value;
         }
 
-        return value;
     }
 
 }
