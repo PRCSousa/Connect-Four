@@ -26,7 +26,7 @@ public class MinMaxAB {
 
     public int minmax(Board state, int depth, boolean isMax, int alpha, int beta) {
 
-        if (depth == 8 || state.isFullyExpanded() == 1 || state.isFullyExpanded() == 2 || state.isFullyExpanded() == 3)
+        if (depth == 7 || state.isFullyExpanded() == 1 || state.isFullyExpanded() == 2 || state.isFullyExpanded() == 3)
             return state.evaluator(); // negativo = bom para o PC
 
         if (isMax) {
