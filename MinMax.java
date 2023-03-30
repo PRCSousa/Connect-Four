@@ -1,84 +1,64 @@
 import java.lang.Math;
-import java.util.ArrayList;
-import java.util.Stack;
 
-public class MinMax{
+public class MinMax {
     Board board;
     int depth;
-    Stack<Board> children;
+    int value;
 
-    MinMax(Board b, int d){
-        board=b;
-        depth=d;
+    MinMax(Board b, int d) {
+        board = b;
+        depth = d;
     }
 
-    //Using DFS Algorithm to Complete the Minimax Tree
-    public static Stack<Board> rewind(Board c) {
-        Stack<Board> solution = new Stack<Board>();
-        while (c != null) {
-            solution.push(c);
-            c = c.getParent();
-        }
-        return solution;
-    }
+    public int minmax() {
+        int minVal = 512;
+        int move = 0;
 
-    public Stack<Board> definechild() {
-        board.setDepth(0);
-        children = new Stack<Board>();
-        children.push(board);
-
-        if (board.isTerminal())
-            return rewind(board);
-
-        while (!children.empty()) {
-            Board currState = children.pop();
-            int depth = currState.getDepth();
-            for (int i=0; i<7; i++) {
-
-                Board newNode = new Board(currState.getBoard(), currState.getTurn());
-                newNode = newNode.makeMove(i);
-
-                if (newNode == null)
-                    continue;
-
-                newNode.setParent(currState);
-                newNode.setDepth(depth + 1);
-
-                if (newNode.isTerminal()){
-                    System.out.println(newNode.getDepth());
-                    return rewind(newNode);
-                }
-
-                if (!children.contains(newNode) && depth < 42) {
-                    children.push(newNode);
+        for (int i = 0; i < 7; i++) {
+            if (board.canInsert(i)) {
+                Board b = new Board(board.getBoard(), board.getTurn());
+                b = b.makeMove(i);
+                int heurVal = minmax(b, 0, true);
+                if (heurVal < minVal) {
+                    minVal = heurVal;
+                    move = i;
                 }
             }
         }
-        return null;
+        return move;
     }
 
-    public int minmax(Board state, int depth, boolean isMax){
-        int value;
-        Board child=new Board();
-        child.setParent(state);
+    public int minmax(Board state, int depth, boolean isMax) {
+        int value = 0;
 
-        if(depth==0 || state.isTerminal()) 
+        if (depth == 0 || state.isTerminal())
             return state.evaluator();
-        
-        if(isMax){
-            value=-512;
-            for(Board i : children){
-                value=Math.max(value, minmax(i, i.getDepth()-1, false));
-            } 
-            return value;
-        }
-        else{
-            value=512;
-            for(Board i:children){
-                value=Math.min(value, minmax(i, i.getDepth()-1, true));
+
+        if (isMax) {
+            value = -512;
+            for (int i = 0; i < 7; i++) {
+                if (state.canInsert(i)) {
+                    Board child = new Board(state.getBoard(), state.getTurn());
+                    child = child.makeMove(i);
+                    value = Math.max(value, minmax(child, depth + 1, false));
+                    return value;
+                }
             }
-            return value;
         }
+
+        else {
+            value = 512;
+            for (int i = 0; i < 7; i++) {
+                if (state.canInsert(i)) {
+                    Board child = new Board(state.getBoard(), state.getTurn());
+                    child = child.makeMove(i);
+                    value = Math.min(value, minmax(child, depth + 1, true));
+                    return value;
+                }
+            }
+        }
+
+        return value;
     }
-    
+
 }

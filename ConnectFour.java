@@ -74,9 +74,9 @@ public class ConnectFour {
                         state = newstate;
 
                     } else { // MinMax
-                        int d = state.getDepth();
-                        MinMax mm = new MinMax(state, d);
-                        Board newstate = state.makeMove((mm.minmax(state, 0, true)));
+                        MinMax mm = new MinMax(state, 0);
+                        //Board newstate = state.makeMove((mm.minmax(state, 0, true)));
+                        Board newstate=state.makeMove(mm.minmax());
                         newstate.printBoard();
 
                         if (newstate.isWinner()) {
@@ -85,6 +85,7 @@ public class ConnectFour {
                         }
 
                         state = newstate;
+
                     }
 
                 }
