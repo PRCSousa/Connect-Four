@@ -1,5 +1,4 @@
 import java.util.PriorityQueue;
-import java.util.Random;
 
 public class MCTSNode implements Comparable<MCTSNode>{
     Board board;
@@ -20,11 +19,11 @@ public class MCTSNode implements Comparable<MCTSNode>{
 
     // Comparar estados pelo UCB
     public int compareTo(MCTSNode b){
-        return Double.compare(b.ucb(),ucb());
+        return Double.compare(this.ucb(),b.ucb());
     }
 
     public double ucb(){
-        return (v/(double)n + Math.sqrt(2)* Math.sqrt(Math.log(parent.n)/(double)n));
+        return (((double)v/(double)n) + (Math.sqrt(2)* (Math.sqrt(Math.log(parent.n)/(double)n))));
     }
 
     public MCTSNode select(){
@@ -34,15 +33,12 @@ public class MCTSNode implements Comparable<MCTSNode>{
     }
 
     public static int randommove() {
-        Random rand = new Random();
-        int randomNum = rand.nextInt(7);
-        return randomNum;
+        return (int) (Math.random() * 7);
     }
 
     public int simulate(){
-
-        Board b = new Board(board.getBoard(), board.getTurn()); // crio uma cópia do board deste node para simular jogos
-        while(b.isFullyExpanded() == 0){ //enquanto não houver vencedor ou empate, joga
+        Board b = new Board(board.getBoard(), board.getTurn()); // creates a copy of the board to simulate a playthrough
+        while(b.isFullyExpanded() == 0){ // while the game is not over
             
             
             int c = randommove();
@@ -53,8 +49,10 @@ public class MCTSNode implements Comparable<MCTSNode>{
 
 
         }
-        return b.isFullyExpanded(); //return a quem ganhou (1 se player, 2 se MC, 3 se empate)
+        return b.isFullyExpanded(); //returns 1 if player wins, 2 if AI wins, 3 if draw
     }
+
+    // Backpropagation sends the result of a simulation to the parent nodes and updates the values of v and n
 
     public void backpropagation(int winner){
         n++;
@@ -62,6 +60,8 @@ public class MCTSNode implements Comparable<MCTSNode>{
         if(parent==null) return;
         parent.backpropagation(winner);
     }
+
+    // Generates all possible children of a node and adds them to the children list
 
     public void expand(){
         for(int i = 0; i < 7; i++)
@@ -78,24 +78,27 @@ public class MCTSNode implements Comparable<MCTSNode>{
         }
     }
 
+    // Aftet backpropagation, reorders the children list by UCB as they get unsorted
+
     public void reset(){
+
         PriorityQueue<MCTSNode> filhos = new PriorityQueue<>();
         while(!children.isEmpty()){
             filhos.add(children.poll());
         }
         children = filhos;
-        if(parent==null){return;}
-        parent.reset();
+
+        if(parent != null) parent.reset();
     }
 
     public Board search(){
-        for(int i = 0; i < 15000; i++){
+        for(int i = 0; i < 30000; i++){
             MCTSNode b = select();
             if(b.board.isFullyExpanded()!=0){
                 b.backpropagation(b.board.isFullyExpanded());}
             else{
                 b.expand();
-                PriorityQueue<MCTSNode> q = new PriorityQueue<>(); // Lista para os filhos derivados de b
+                PriorityQueue<MCTSNode> q = new PriorityQueue<>();
                 while(!b.children.isEmpty())
                 {
                     MCTSNode childNode = b.children.poll();
@@ -105,7 +108,7 @@ public class MCTSNode implements Comparable<MCTSNode>{
                 }
                 b.children = q;
             }
-            b.reset();
+            b.reset(); // Aftet backpropagation, reorders the children list by UCB as they get unsorted
         }
 
         Board b = children.peek().board;

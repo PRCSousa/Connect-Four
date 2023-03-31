@@ -32,6 +32,7 @@ public class ConnectFour {
                 break;
 
             case "MCTS":
+                inicial.printBoard();
 
                 Board current = inicial;
 
@@ -71,6 +72,7 @@ public class ConnectFour {
                 break;
 
             case "MM":
+                inicial.printBoard();   
 
                 Board state = inicial;
 
@@ -115,6 +117,7 @@ public class ConnectFour {
                 break;
 
             case "AB":
+                inicial.printBoard();
 
                 Board ab = inicial;
 
