@@ -2,10 +2,6 @@ import java.lang.Math;
 
 public class MinMax {
 
-    MinMax() {
-
-    }
-
     public int minmax(Board board) {
         int minVal = 512;
         int move = 0;
@@ -27,7 +23,7 @@ public class MinMax {
     public int minmax(Board state, int depth, boolean isMax) {
 
         if (depth == 6 || state.isFullyExpanded() == 1 || state.isFullyExpanded() == 2 || state.isFullyExpanded() == 3)
-            return state.evaluator(); // negativo = bom para o PC
+            return state.evaluator();
 
         if (isMax) {
             int value = -513;

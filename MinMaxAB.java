@@ -2,10 +2,6 @@ import java.lang.Math;
 
 public class MinMaxAB {
 
-    MinMaxAB() {
-
-    }
-
     public int minmax(Board board) {
         int minVal = 512;
         int move = 0;
