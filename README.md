@@ -13,7 +13,7 @@ In the argument [algorithm], you may choose what kind of game you want to play:
 
 "PVP" - Player VS Player
 
-2MM"  - MinMax
+"MM"  - MinMax
 
 "AB"  - MinMax with Alpha-Beta Pruning
 
