@@ -58,9 +58,10 @@ public class ConnectFour {
                         current = newB;
 
                     } else { // MCTS
-                        MCTSNode MonteCarlo = new MCTSNode(current, null);
-                        Board newB = MonteCarlo.search();
-                        System.out.println("\n        MCTS move: " + (newB.getMove() + 1));
+                        MCTS MonteCarlo = new MCTS(current);
+                        int mov = MonteCarlo.run();
+                        System.out.println("\n        MCTS move: " + (mov + 1));
+                        Board newB = current.makeMove(mov);
                         newB.printBoard();
                         if (newB.isWinner()) {
                             System.out.println("Monte Carlo Tree Search won !");
