@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 public class MCTSNode implements Comparable<MCTSNode>{
     Board board;
@@ -6,7 +6,7 @@ public class MCTSNode implements Comparable<MCTSNode>{
     int visits;
     int wins;
     MCTSNode parent;
-    ArrayList<MCTSNode> children;
+    PriorityQueue<MCTSNode> children;
 
     public MCTSNode(Board tab, MCTSNode par){
         board = tab;
@@ -14,7 +14,7 @@ public class MCTSNode implements Comparable<MCTSNode>{
         visits = 0;
         wins = 0;
         parent = par;
-        children = new ArrayList<MCTSNode>();
+        children = new PriorityQueue<MCTSNode>();
     }
 
     public double ucb(){
@@ -27,5 +27,10 @@ public class MCTSNode implements Comparable<MCTSNode>{
     public int compareTo(MCTSNode other){
         return -1*Double.compare(this.ucb(),other.ucb());
     }
+
+    public void setChildren(PriorityQueue<MCTSNode> children){
+        this.children = children;
+    }
+
 
 }

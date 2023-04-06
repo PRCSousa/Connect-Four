@@ -1,73 +1,70 @@
-
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
+public class MCTS{
+    private MCTSNode root;
 
-public class MCTS {
-    MCTSNode root;
-    public MCTS(Board br){
-        this.root = new MCTSNode(br, null);
+    MCTS(Board r){
+        root = new MCTSNode(r, null);
     }
 
     public MCTSNode select(){
 
-        MCTSNode node = root;
+        MCTSNode cur = root;
 
-        while(node.children.size() > 0)
-        {
-            PriorityQueue<MCTSNode> pq = new PriorityQueue<MCTSNode>();
+        while (cur.children.size() > 0){
 
-            pq.addAll(node.children);
+            PriorityQueue<MCTSNode> cur_children = new PriorityQueue<MCTSNode>();
+            cur_children.addAll(cur.children);
 
-            LinkedList<MCTSNode> max = new LinkedList<MCTSNode>();
+            LinkedList<MCTSNode> max_nodes = new LinkedList<MCTSNode>();
+            double max_value = cur_children.peek().ucb();
 
-            double max_ucb = pq.peek().ucb();
-
-            while(pq.peek() != null && pq.peek().ucb() == max_ucb){
-                max.addFirst(pq.poll());
-            }
-            // return a random node with max ucb
-            int index = (int)(Math.random()*max.size());
-            for(int i = 0; i < index; i++){
-                max.removeFirst();
-            }
-            node = max.removeFirst();
-
-            if (node.visits == 0) {
-                return node;
-            }
-        }
-        return node;
-
-    }
-
-    public MCTSNode expand(MCTSNode node){
-        if(node.board.isFullyExpanded() != 0){
-            return null;
-        }
-
-        for(int i = 0; i < 7; i++)
-        {
+            while (cur_children.peek() != null && cur_children.peek().ucb() == max_value) max_nodes.addFirst(cur_children.poll());
             
-            if(node.board.canInsert(i))
-            {
-                Board b = new Board(node.board.getBoard(), node.player);
-                b = b.makeMove(i);
-                b.setMove(i);
-                MCTSNode newNode = new MCTSNode(b, node);
-          //      System.out.println("expanded playert" + newNode.player);
-                node.children.add(newNode);
-            }
+            int random_node = (int)(Math.random() * max_nodes.size());
+            for (int i = 0; i < random_node; i++) max_nodes.removeFirst();
+
+            cur = max_nodes.removeFirst();
+
+            if (cur.visits == 0) return cur;
         }
 
-        // return a random child
-        return node.children.get((int)(Math.random()*node.children.size()));
+        // cur is a leaf
+        return cur;
     }
+
+    public MCTSNode expand(MCTSNode leaf){
+
+        if (leaf.board.isFullyExpanded() != 0) return null;
+
+        Board leaf_b = new Board(leaf.board.getBoard(), leaf.player);
+
+        PriorityQueue<MCTSNode> leaf_children = leaf.children;
+
+        for (int i = 0; i < 7; i++){
+            
+            Board aux = new Board(leaf.board.getBoard(), leaf.player);
+            aux = aux.makeMove(i);
+            if (aux == null) continue;
+            aux.setParent(leaf_b);
+            MCTSNode child = new MCTSNode(aux, leaf);
+            leaf_children.add(child);
+        }
+
+        int rand_child = (int)(Math.random() * leaf.children.size());
+        PriorityQueue<MCTSNode> children = new PriorityQueue<MCTSNode>();
+        children.addAll(leaf.children);
+
+        for (int i = 0; i < rand_child; i++) children.poll();
+
+        return children.poll();
+    }   
 
     public int simulate(MCTSNode node){
 
-        Board b = node.board;
-        //System.out.println("simulating player" + b.getTurn() + "skmlef" + node.player);
+        Board b = new Board(node.board.getBoard(), node.player);
+
         while(b.isFullyExpanded() == 0){
 
             int move = (int)(Math.random()*7);
@@ -76,49 +73,53 @@ public class MCTS {
                 b.setMove(move);
             }
         }
-        //System.out.println("who won" + b.isFullyExpanded());
+
         return b.isFullyExpanded();
     }
 
-    public void backpropagate(MCTSNode node, int result){
-            node.visits++;
+    public void backpropagate(MCTSNode child, int outcome){
 
-            if(node.player == result){
-                node.wins++;
-            }
-          //  System.out.println("backpropagating player" + node.player + " " + node.wins + " " + node.visits);
-            node.children.sort(null);
+        int w = 1;
+        if (outcome == child.player) w = 0;
 
-            if(node.parent != null){
-                backpropagate(node.parent, result);
-            }
+        while (child != null){
 
+            child.visits = child.visits + 1;
+            child.wins = child.wins + w;
+
+            if (child.parent != null) child.parent.setChildren(resort(child.parent.children));
+
+            child = child.parent;
+
+            if (outcome == 0) w = 0;
+            else w = 1-w;
+        }
 
     }
 
-    public int run(){
-        //System.out.println(root.player);
-        for(int i = 0; i < 100000; i++){
+    public PriorityQueue<MCTSNode> resort(PriorityQueue<MCTSNode> children){
 
+        PriorityQueue<MCTSNode> newQ = new PriorityQueue<MCTSNode>();
+
+        while (children.size() > 0) newQ.add(children.poll());
+
+        return newQ;
+    }
+
+    public Board run(){
+        for (int i = 0; i < 30000; i++){
             MCTSNode node = select();
-
-            if(node.board.isFullyExpanded() != 0){
-                backpropagate(node, node.board.isFullyExpanded());
-            }else{
-
+            
+            if (node.board.isFullyExpanded() != 0) backpropagate(node, node.board.isFullyExpanded());
+            else{
                 MCTSNode child = expand(node);
-                int val = simulate(child);
-                backpropagate(child, val);
-            }
+                int simVal = simulate(child);
+                backpropagate(child, simVal);
+            }   
         }
+        MCTSNode result = root.children.peek();
 
-        // return the best move from root
-        MCTSNode best = root.children.get(0);
-    
-        // for every child of root, print status
-        for (MCTSNode child : root.children) {
-            System.out.println("Move: " + (child.board.getMove() + 1) + " | W = " + child.wins + " / N = " + child.visits + " | UCT = " + child.ucb());
-        }
-        return best.board.getMove();
+        return result.board;
     }
+
 }

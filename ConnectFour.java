@@ -59,9 +59,7 @@ public class ConnectFour {
 
                     } else { // MCTS
                         MCTS MonteCarlo = new MCTS(current);
-                        int mov = MonteCarlo.run();
-                        System.out.println("\n        MCTS move: " + (mov + 1));
-                        Board newB = current.makeMove(mov);
+                        Board newB = MonteCarlo.run();
                         newB.printBoard();
                         if (newB.isWinner()) {
                             System.out.println("Monte Carlo Tree Search won !");
