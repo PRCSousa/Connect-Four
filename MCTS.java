@@ -20,7 +20,8 @@ public class MCTS{
             LinkedList<MCTSNode> max_nodes = new LinkedList<MCTSNode>();
             double max_value = cur_children.peek().ucb();
 
-            while (cur_children.peek() != null && cur_children.peek().ucb() == max_value) max_nodes.addFirst(cur_children.poll());
+            while (cur_children.peek() != null && cur_children.peek().ucb() == max_value)
+                max_nodes.addFirst(cur_children.poll());
             
             int random_node = (int)(Math.random() * max_nodes.size());
             for (int i = 0; i < random_node; i++) max_nodes.removeFirst();
@@ -30,31 +31,32 @@ public class MCTS{
             if (cur.visits == 0) return cur;
         }
 
-        // cur is a leaf
         return cur;
     }
 
-    public MCTSNode expand(MCTSNode leaf){
+    public MCTSNode expand(MCTSNode node){
 
-        if (leaf.board.isFullyExpanded() != 0) return null;
+        if (node.board.isFullyExpanded() != 0) return null;
 
-        Board leaf_b = new Board(leaf.board.getBoard(), leaf.player);
+        Board nodeBoard = new Board(node.board.getBoard(), node.player);
 
-        PriorityQueue<MCTSNode> leaf_children = leaf.children;
+        PriorityQueue<MCTSNode> nodeChildren = node.children;
 
         for (int i = 0; i < 7; i++){
             
-            Board aux = new Board(leaf.board.getBoard(), leaf.player);
+            Board aux = new Board(node.board.getBoard(), node.player);
             aux = aux.makeMove(i);
+
             if (aux == null) continue;
-            aux.setParent(leaf_b);
-            MCTSNode child = new MCTSNode(aux, leaf);
-            leaf_children.add(child);
+            
+            aux.setParent(nodeBoard);
+            MCTSNode child = new MCTSNode(aux, node);
+            nodeChildren.add(child);
         }
 
-        int rand_child = (int)(Math.random() * leaf.children.size());
+        int rand_child = (int)(Math.random() * node.children.size());
         PriorityQueue<MCTSNode> children = new PriorityQueue<MCTSNode>();
-        children.addAll(leaf.children);
+        children.addAll(node.children);
 
         for (int i = 0; i < rand_child; i++) children.poll();
 
