@@ -22,7 +22,7 @@ public class MinMax {
 
     public int minmax(Board state, int depth, boolean isMax) {
 
-        if (depth == 6 || state.isFullyExpanded() == 1 || state.isFullyExpanded() == 2 || state.isFullyExpanded() == 3)
+        if (depth == 6 || state.isFullyExpanded() != 0)
             return state.evaluator();
 
         if (isMax) {
