@@ -17,6 +17,8 @@ In the argument [algorithm], you may choose what kind of game you want to play:
 
 "AB"  - MinMax with Alpha-Beta Pruning
 
+"MCTS" - Monte Carlo Tree Search
+
 # How to play:
 
 After the game begins, you may choose where to drop the token by typing in the CMD the column.
